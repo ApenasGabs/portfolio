@@ -3,9 +3,7 @@ import React from 'react'
 const Card = () => {
   return (
     <div>
-      <h1>Titulo</h1>
-      <p>paragrafo</p>
-      Meu card aqui
+      <h1>🚧 Em construção </h1>
     </div>
   )
 }
