@@ -13,7 +13,7 @@ interface UserLangs {
 const Home = () => {
   const [repos, setRepos] = useState<ReposProps[]>();
   const [langs, setLangs] = useState<UserLangs[]>();
-  const [filteredRepos, setFilteredRepos] = useState<ReposProps[]>(["Java"]);
+  const [filteredRepos, setFilteredRepos] = useState<ReposProps[]>([]);
   const baseUrl = "https://api.github.com/users/apenasgabs/repos";
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
