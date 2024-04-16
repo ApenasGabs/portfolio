@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import axios from "axios";
-import { Card, Flex, message, Modal, Tag } from "antd";
+import { Button, Card, Flex, message, Modal, Tag } from "antd";
 
 import { ReposProps } from "../../types";
 import { StyledModalContent } from "../../components/Modal/Modal.styles";
@@ -117,11 +117,25 @@ const Home = () => {
       <Modal
         centered
         width={1000}
-        okText={"Ver portfolio 👀"}
-        cancelText={"Ver como isso e feito 🤔"}
         open={isModalOpen}
-        onOk={() => setIsModalOpen((prev) => !prev)}
-        onCancel={() => setIsModalOpen((prev) => !prev)}
+        footer={[
+          <Button key="back">
+            <a
+              href="https://github.com/ApenasGabs/portfolio"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              Ver como isso e feito 🤔
+            </a>
+          </Button>,
+          <Button
+            onClick={() => setIsModalOpen((prev) => !prev)}
+            key="submit"
+            type="primary"
+          >
+            Ver portfolio 👀
+          </Button>,
+        ]}
       >
         <StyledModalContent>
           <h2> 🚧 Estamos em reforma 🚧 </h2>
