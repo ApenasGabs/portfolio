@@ -1,8 +1,9 @@
 import { useEffect, useRef, useState } from "react";
 import axios from "axios";
-import { Card, Flex, message, Tag } from "antd";
+import { Button, Card, Flex, message, Modal, Tag } from "antd";
 
 import { ReposProps } from "../../types";
+import { StyledModalContent } from "../../components/Modal/Modal.styles";
 
 import { StyledCardProps, StyledHomeContainer } from "./Home.styles";
 
@@ -17,7 +18,7 @@ const Home = () => {
   const baseUrl = "https://api.github.com/users/apenasgabs/repos";
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
-
+  const [isModalOpen, setIsModalOpen] = useState(true);
   const handleChange = (tag: string, checked: boolean) => {
     const nextSelectedTags = checked
       ? [...selectedTags, tag]
@@ -113,6 +114,41 @@ const Home = () => {
 
   return (
     <>
+      <Modal
+        centered
+        width={1000}
+        open={isModalOpen}
+        footer={[
+          <Button key="back">
+            <a
+              href="https://github.com/ApenasGabs/portfolio"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              Ver como isso e feito 🤔
+            </a>
+          </Button>,
+          <Button
+            onClick={() => setIsModalOpen((prev) => !prev)}
+            key="submit"
+            type="primary"
+          >
+            Ver portfolio 👀
+          </Button>,
+        ]}
+      >
+        <StyledModalContent>
+          <h2> 🚧 Estamos em reforma 🚧 </h2>
+          <p>
+            Para facilitar a manutenção estou refazendo para que ele pegue meus
+            repositórios de forma automática usando a API do github .
+            <p>
+              Por enquanto ja temos a lista dos repositórios com algumas
+              informações, mas sem CSS 😅
+            </p>
+          </p>
+        </StyledModalContent>
+      </Modal>
       <Flex gap={4} wrap="wrap" align="center">
         <span>Categories:</span>
         {langs &&
@@ -149,6 +185,10 @@ const Home = () => {
                 <p>
                   Ultima atualização:
                   {new Date(repo.updated_at).toLocaleString()}
+                </p>
+                <p>
+                  Ultimo push:
+                  {new Date(repo.pushed_at).toLocaleString()}
                 </p>
                 <p>Criado em: {new Date(repo.created_at).toLocaleString()}</p>
               </Card>
