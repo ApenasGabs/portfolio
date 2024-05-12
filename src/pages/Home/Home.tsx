@@ -1,11 +1,15 @@
-import { useEffect, useRef, useState } from "react";
+import { ReactNode, useEffect, useRef, useState } from "react";
 import axios from "axios";
 import { Button, Card, Flex, message, Modal, Tag } from "antd";
 
 import { ReposProps } from "../../types";
 import { StyledModalContent } from "../../components/Modal/Modal.styles";
 
-import { StyledCardProps, StyledHomeContainer } from "./Home.styles";
+import {
+  StyledCardProps,
+  StyledHomeContainer,
+  StyledTagContainer,
+} from "./Home.styles";
 
 interface UserLangs {
   language: string;
@@ -25,6 +29,7 @@ const Home = () => {
       : selectedTags.filter((t) => t !== tag);
     setSelectedTags(nextSelectedTags);
   };
+
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -87,6 +92,7 @@ const Home = () => {
 
     fetchData();
   }, []);
+
   useEffect(() => {
     if (repos) {
       setFilteredRepos(
@@ -94,6 +100,7 @@ const Home = () => {
       );
     }
   }, [repos, selectedTags]);
+
   useEffect(() => {
     const interval = setInterval(() => {
       if (scrollContainerRef.current) {
@@ -149,19 +156,21 @@ const Home = () => {
           </p>
         </StyledModalContent>
       </Modal>
-      <Flex gap={4} wrap="wrap" align="center">
-        <span>Categories:</span>
-        {langs &&
-          langs.map<React.ReactNode>((lang) => (
-            <Tag.CheckableTag
-              key={lang.language}
-              checked={selectedTags.includes(lang.language)}
-              onChange={(checked) => handleChange(lang.language, checked)}
-            >
-              {lang.language}
-            </Tag.CheckableTag>
-          ))}
-      </Flex>
+      <StyledTagContainer>
+        <Flex gap={4} wrap="wrap" align="center">
+          <span>Categories:</span>
+          {langs &&
+            langs.map<ReactNode>((lang) => (
+              <Tag.CheckableTag
+                key={lang.language}
+                checked={selectedTags.includes(lang.language)}
+                onChange={(checked) => handleChange(lang.language, checked)}
+              >
+                {lang.language}
+              </Tag.CheckableTag>
+            ))}
+        </Flex>
+      </StyledTagContainer>
       <StyledHomeContainer ref={scrollContainerRef}>
         {filteredRepos &&
           filteredRepos.map((repo) => {

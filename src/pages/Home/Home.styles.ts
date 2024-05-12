@@ -12,3 +12,10 @@ export const StyledCardProps = {
   width: "20vw",
   height: "auto",
 };
+
+export const StyledTagContainer = styled.div`
+  background: red;
+  display: flex;
+  flex-direction: column;
+  /* align-items: end; */
+`;
