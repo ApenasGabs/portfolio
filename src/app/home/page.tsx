@@ -1,6 +1,8 @@
 import { useEffect, useRef, useState } from "react";
 import axios from "axios";
-import Image from "next/image";
+import Modal from "@/components/Modal/Modal";
+import TagFilter from "@/components/TagFilter/TagFilter";
+import RepoCard from "@/components/RepoCard/RepoCard";
 
 interface ReposProps {
   id: number;
@@ -22,10 +24,10 @@ const Home = () => {
   const [repos, setRepos] = useState<ReposProps[]>([]);
   const [langs, setLangs] = useState<UserLangs[]>([]);
   const [filteredRepos, setFilteredRepos] = useState<ReposProps[]>([]);
-  const baseUrl = "https://api.github.com/users/apenasgabs/repos";
-  const scrollContainerRef = useRef<HTMLDivElement>(null);
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
   const [isModalOpen, setIsModalOpen] = useState(true);
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
+  const baseUrl = "https://api.github.com/users/apenasgabs/repos";
 
   const handleChange = (tag: string, checked: boolean) => {
     const nextSelectedTags = checked
@@ -125,87 +127,18 @@ const Home = () => {
 
   return (
     <>
-      <input
-        type="checkbox"
-        id="my-modal"
-        className="modal-toggle"
-        defaultChecked={isModalOpen}
+      <Modal isModalOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
+      <TagFilter
+        langs={langs}
+        selectedTags={selectedTags}
+        handleChange={handleChange}
       />
-      <div className="modal">
-        <div className="modal-box w-11/12 max-w-5xl">
-          <h2 className="text-lg font-bold">🚧 Estamos em reforma 🚧</h2>
-          <p>
-            Para facilitar a manutenção estou refazendo para que ele pegue meus
-            repositórios de forma automática usando a API do github.
-          </p>
-          <p>
-            Por enquanto já temos a lista dos repositórios com algumas
-            informações, mas sem CSS 😅
-          </p>
-          <div className="modal-action">
-            <a
-              href="https://github.com/ApenasGabs/portfolio"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="btn"
-            >
-              Ver como isso é feito 🤔
-            </a>
-            <label
-              htmlFor="my-modal"
-              className="btn btn-primary"
-              onClick={() => setIsModalOpen(false)}
-            >
-              Ver portfolio 👀
-            </label>
-          </div>
-        </div>
-      </div>
-      <div className="flex flex-wrap gap-4 items-center my-4">
-        <span>Categories:</span>
-        {langs.map((lang) => (
-          <div key={lang.language}>
-            <input
-              type="checkbox"
-              id={`tag-${lang.language}`}
-              className="hidden"
-              checked={selectedTags.includes(lang.language)}
-              onChange={(e) => handleChange(lang.language, e.target.checked)}
-            />
-            <label
-              htmlFor={`tag-${lang.language}`}
-              className="cursor-pointer btn btn-outline btn-sm"
-            >
-              {lang.language}
-            </label>
-          </div>
-        ))}
-      </div>
       <div
         className="flex gap-4 flex-wrap overflow-x-auto"
         ref={scrollContainerRef}
       >
         {filteredRepos.map((repo) => (
-          <div key={repo.id} className="card w-96 bg-base-100 shadow-xl">
-            <div className="card-body">
-              <h2 className="card-title">
-                <a href={repo.html_url}>{repo.name}</a>
-                {repo.language && (
-                  <Image
-                    src={`https://skillicons.dev/icons?i=${repo.language.toLowerCase()}`}
-                    alt={repo.language}
-                    className="w-6 h-6 ml-2"
-                  />
-                )}
-              </h2>
-              {repo.description && <p>{repo.description}</p>}
-              <p>
-                Última atualização: {new Date(repo.updated_at).toLocaleString()}
-              </p>
-              <p>Último push: {new Date(repo.pushed_at).toLocaleString()}</p>
-              <p>Criado em: {new Date(repo.created_at).toLocaleString()}</p>
-            </div>
-          </div>
+          <RepoCard key={repo.id} {...repo} />
         ))}
       </div>
     </>
