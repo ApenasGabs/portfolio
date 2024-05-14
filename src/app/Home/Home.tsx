@@ -1,28 +1,32 @@
-import { ReactNode, useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import axios from "axios";
-import { Button, Card, Flex, message, Modal, Tag } from "antd";
+import Image from "next/image";
 
-import { ReposProps } from "../../types";
-import { StyledModalContent } from "../../components/Modal/Modal.styles";
-
-import {
-  StyledCardProps,
-  StyledHomeContainer,
-  StyledTagContainer,
-} from "./Home.styles";
+interface ReposProps {
+  id: number;
+  name: string;
+  html_url: string;
+  description: string;
+  language: string;
+  updated_at: string;
+  pushed_at: string;
+  created_at: string;
+}
 
 interface UserLangs {
   language: string;
   quantity: number;
 }
+
 const Home = () => {
-  const [repos, setRepos] = useState<ReposProps[]>();
-  const [langs, setLangs] = useState<UserLangs[]>();
+  const [repos, setRepos] = useState<ReposProps[]>([]);
+  const [langs, setLangs] = useState<UserLangs[]>([]);
   const [filteredRepos, setFilteredRepos] = useState<ReposProps[]>([]);
   const baseUrl = "https://api.github.com/users/apenasgabs/repos";
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
   const [isModalOpen, setIsModalOpen] = useState(true);
+
   const handleChange = (tag: string, checked: boolean) => {
     const nextSelectedTags = checked
       ? [...selectedTags, tag]
@@ -86,7 +90,7 @@ const Home = () => {
         );
         setFilteredRepos(allRepos);
       } catch (error) {
-        message.error(`${error}`);
+        console.error(error);
       }
     };
 
@@ -121,89 +125,89 @@ const Home = () => {
 
   return (
     <>
-      <Modal
-        centered
-        width={1000}
-        open={isModalOpen}
-        footer={[
-          <Button key="back">
+      <input
+        type="checkbox"
+        id="my-modal"
+        className="modal-toggle"
+        defaultChecked={isModalOpen}
+      />
+      <div className="modal">
+        <div className="modal-box w-11/12 max-w-5xl">
+          <h2 className="text-lg font-bold">🚧 Estamos em reforma 🚧</h2>
+          <p>
+            Para facilitar a manutenção estou refazendo para que ele pegue meus
+            repositórios de forma automática usando a API do github.
+          </p>
+          <p>
+            Por enquanto já temos a lista dos repositórios com algumas
+            informações, mas sem CSS 😅
+          </p>
+          <div className="modal-action">
             <a
               href="https://github.com/ApenasGabs/portfolio"
               target="_blank"
               rel="noopener noreferrer"
+              className="btn"
             >
-              Ver como isso e feito 🤔
+              Ver como isso é feito 🤔
             </a>
-          </Button>,
-          <Button
-            onClick={() => setIsModalOpen((prev) => !prev)}
-            key="submit"
-            type="primary"
-          >
-            Ver portfolio 👀
-          </Button>,
-        ]}
+            <label
+              htmlFor="my-modal"
+              className="btn btn-primary"
+              onClick={() => setIsModalOpen(false)}
+            >
+              Ver portfolio 👀
+            </label>
+          </div>
+        </div>
+      </div>
+      <div className="flex flex-wrap gap-4 items-center my-4">
+        <span>Categories:</span>
+        {langs.map((lang) => (
+          <div key={lang.language}>
+            <input
+              type="checkbox"
+              id={`tag-${lang.language}`}
+              className="hidden"
+              checked={selectedTags.includes(lang.language)}
+              onChange={(e) => handleChange(lang.language, e.target.checked)}
+            />
+            <label
+              htmlFor={`tag-${lang.language}`}
+              className="cursor-pointer btn btn-outline btn-sm"
+            >
+              {lang.language}
+            </label>
+          </div>
+        ))}
+      </div>
+      <div
+        className="flex gap-4 flex-wrap overflow-x-auto"
+        ref={scrollContainerRef}
       >
-        <StyledModalContent>
-          <h2> 🚧 Estamos em reforma 🚧 </h2>
-          <p>
-            Para facilitar a manutenção estou refazendo para que ele pegue meus
-            repositórios de forma automática usando a API do github .
-            <p>
-              Por enquanto ja temos a lista dos repositórios com algumas
-              informações, mas sem CSS 😅
-            </p>
-          </p>
-        </StyledModalContent>
-      </Modal>
-      <StyledTagContainer>
-        <Flex gap={4} wrap="wrap" align="center">
-          <span>Categories:</span>
-          {langs &&
-            langs.map<ReactNode>((lang) => (
-              <Tag.CheckableTag
-                key={lang.language}
-                checked={selectedTags.includes(lang.language)}
-                onChange={(checked) => handleChange(lang.language, checked)}
-              >
-                {lang.language}
-              </Tag.CheckableTag>
-            ))}
-        </Flex>
-      </StyledTagContainer>
-      <StyledHomeContainer ref={scrollContainerRef}>
-        {filteredRepos &&
-          filteredRepos.map((repo) => {
-            return (
-              <Card
-                title={
-                  <>
-                    <a href={repo.html_url}>{repo.name}</a>
-                    {repo.language && (
-                      <img
-                        src={`https://skillicons.dev/icons?i=${repo.language.toLowerCase()}`}
-                        alt={repo.language}
-                      />
-                    )}
-                  </>
-                }
-                bordered={false}
-                style={StyledCardProps}
-              >
-                {repo.description && <p>{repo.description}</p>}
-                <p>
-                  Ultima atualização:
-                  {new Date(repo.updated_at).toLocaleString()}
-                </p>
-                <p>
-                  Ultimo push:
-                  {new Date(repo.pushed_at).toLocaleString()}
-                </p>
-                <p>Criado em: {new Date(repo.created_at).toLocaleString()}</p>
-              </Card>
-            );
-          })}
-      </StyledHomeContainer>
+        {filteredRepos.map((repo) => (
+          <div key={repo.id} className="card w-96 bg-base-100 shadow-xl">
+            <div className="card-body">
+              <h2 className="card-title">
+                <a href={repo.html_url}>{repo.name}</a>
+                {repo.language && (
+                  <Image
+                    src={`https://skillicons.dev/icons?i=${repo.language.toLowerCase()}`}
+                    alt={repo.language}
+                    className="w-6 h-6 ml-2"
+                  />
+                )}
+              </h2>
+              {repo.description && <p>{repo.description}</p>}
+              <p>
+                Última atualização: {new Date(repo.updated_at).toLocaleString()}
+              </p>
+              <p>Último push: {new Date(repo.pushed_at).toLocaleString()}</p>
+              <p>Criado em: {new Date(repo.created_at).toLocaleString()}</p>
+            </div>
+          </div>
+        ))}
+      </div>
     </>
   );
 };
