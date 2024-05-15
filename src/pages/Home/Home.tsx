@@ -1,9 +1,7 @@
 import { ReactNode, useEffect, useRef, useState } from "react";
 import axios from "axios";
-import { Flex, message, Tag } from "antd";
 
 import { ReposProps } from "../../types";
-import { StyledHomeContainer, StyledTagContainer } from "./Home.styles";
 import Modal from "../../components/Modal/Modal";
 import CardList from "../../components/CardList/CardList";
 
@@ -11,6 +9,7 @@ interface UserLangs {
   language: string;
   quantity: number;
 }
+
 const Home = () => {
   const [repos, setRepos] = useState<ReposProps[]>();
   const [langs, setLangs] = useState<UserLangs[]>();
@@ -19,6 +18,7 @@ const Home = () => {
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
   const [isModalOpen, setIsModalOpen] = useState(true);
+
   const handleChange = (tag: string, checked: boolean) => {
     const nextSelectedTags = checked
       ? [...selectedTags, tag]
@@ -82,7 +82,7 @@ const Home = () => {
         );
         setFilteredRepos(allRepos);
       } catch (error) {
-        message.error(`${error}`);
+        console.error(error);
       }
     };
 
@@ -97,48 +97,35 @@ const Home = () => {
     }
   }, [repos, selectedTags]);
 
-  useEffect(() => {
-    const interval = setInterval(() => {
-      if (scrollContainerRef.current) {
-        const container = scrollContainerRef.current;
-        if (
-          container.scrollWidth - container.scrollLeft <=
-          container.offsetWidth
-        ) {
-          container.scrollLeft = 0;
-        } else {
-          container.scrollLeft += 1;
-        }
-      }
-    }, 10);
-
-    return () => clearInterval(interval);
-  }, []);
-
   return (
     <>
       <Modal
         isModalOpen={isModalOpen}
         onClose={() => setIsModalOpen((prev) => !prev)}
       />
-      <StyledTagContainer>
-        <Flex gap={4} wrap="wrap" align="center">
+      <div className="p-4">
+        <div className="flex gap-4 flex-wrap items-center">
           <span>Categories:</span>
           {langs &&
             langs.map<ReactNode>((lang) => (
-              <Tag.CheckableTag
+              <div
+                className="badge badge-primary cursor-pointer"
                 key={lang.language}
-                checked={selectedTags.includes(lang.language)}
-                onChange={(checked) => handleChange(lang.language, checked)}
               >
-                {lang.language}
-              </Tag.CheckableTag>
+                <input
+                  type="checkbox"
+                  checked={selectedTags.includes(lang.language)}
+                  onChange={(e) =>
+                    handleChange(lang.language, e.target.checked)
+                  }
+                  className="hidden"
+                />
+                <span>{lang.language}</span>
+              </div>
             ))}
-        </Flex>
-      </StyledTagContainer>
-      <StyledHomeContainer ref={scrollContainerRef}>
-        {filteredRepos && <CardList repoList={filteredRepos} />}
-      </StyledHomeContainer>
+        </div>
+      </div>
+      {filteredRepos && <CardList repoList={filteredRepos} />}
     </>
   );
 };
