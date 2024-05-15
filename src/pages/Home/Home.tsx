@@ -1,16 +1,13 @@
 import { ReactNode, useEffect, useRef, useState } from "react";
 import axios from "axios";
-import { Button, Card, Flex, message, Modal, Tag } from "antd";
+import {   Card, Flex, message, Tag } from "antd";
 
 import { ReposProps } from "../../types";
-import { StyledModalContent } from "../../components/Modal/Modal.styles";
+import { StyledTagContainer } from "./Home.styles";
+import Modal from "../../components/Modal/Modal";
+// import { StyledModalContent } from "../../components/Modal/Modal.styles";
 
-import {
-  StyledCardProps,
-  StyledHomeContainer,
-  StyledTagContainer,
-} from "./Home.styles";
-
+ 
 interface UserLangs {
   language: string;
   quantity: number;
@@ -121,41 +118,7 @@ const Home = () => {
 
   return (
     <>
-      <Modal
-        centered
-        width={1000}
-        open={isModalOpen}
-        footer={[
-          <Button key="back">
-            <a
-              href="https://github.com/ApenasGabs/portfolio"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              Ver como isso e feito 🤔
-            </a>
-          </Button>,
-          <Button
-            onClick={() => setIsModalOpen((prev) => !prev)}
-            key="submit"
-            type="primary"
-          >
-            Ver portfolio 👀
-          </Button>,
-        ]}
-      >
-        <StyledModalContent>
-          <h2> 🚧 Estamos em reforma 🚧 </h2>
-          <p>
-            Para facilitar a manutenção estou refazendo para que ele pegue meus
-            repositórios de forma automática usando a API do github .
-            <p>
-              Por enquanto ja temos a lista dos repositórios com algumas
-              informações, mas sem CSS 😅
-            </p>
-          </p>
-        </StyledModalContent>
-      </Modal>
+    <Modal  isModalOpen={isModalOpen} onClose={ ()=>setIsModalOpen((prev) => !prev)}/>
       <StyledTagContainer>
         <Flex gap={4} wrap="wrap" align="center">
           <span>Categories:</span>
