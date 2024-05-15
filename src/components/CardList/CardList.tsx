@@ -58,7 +58,7 @@ const CardList = ({ repoList }: CardListProps) => {
           <div className="card-actions justify-center">
             <button className="btn btn-active btn-neutral">
               <a target="_blank" href={repo.html_url}>
-                Ver no github
+                See on GitHub
               </a>
             </button>
           </div>

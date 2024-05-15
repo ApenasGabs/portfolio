@@ -123,7 +123,7 @@ const Home = () => {
       />
       <div className="bg-info flex flex-col p-4">
         <div className="flex gap-4 flex-wrap items-center justify-center">
-          <span>Languages:</span>
+          <p className="text-xl">Languages: </p>,
           {langs &&
             langs.map<ReactNode>((lang) => (
               <div
