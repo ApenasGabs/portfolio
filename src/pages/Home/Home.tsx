@@ -121,7 +121,7 @@ const Home = () => {
         isModalOpen={isModalOpen}
         onClose={() => setIsModalOpen((prev) => !prev)}
       />
-      <div className="p-4">
+      <div className="bg-red-500 flex flex-col p-4">
         <div className="flex gap-4 flex-wrap items-center">
           <span>Categories:</span>
           {langs &&
@@ -140,7 +140,7 @@ const Home = () => {
             ))}
         </div>
       </div>
-      <div className="overflow-x-auto p-4" ref={scrollContainerRef}>
+      <div className="flex flex-wrap justify-between gap-2 p-5" ref={scrollContainerRef}>
         {filteredRepos && <CardList repoList={filteredRepos} />}
       </div>
     </>
