@@ -121,17 +121,17 @@ const Home = () => {
         isModalOpen={isModalOpen}
         onClose={() => setIsModalOpen((prev) => !prev)}
       />
-      <div className="bg-red-500 flex flex-col p-4">
-        <div className="flex gap-4 flex-wrap items-center">
-          <span>Categories:</span>
+      <div className="bg-info flex flex-col p-4">
+        <div className="flex gap-4 flex-wrap items-center justify-center">
+          <span>Languages:</span>
           {langs &&
             langs.map<ReactNode>((lang) => (
               <div
                 key={lang.language}
                 className={`badge cursor-pointer ${
                   selectedTags.includes(lang.language)
-                    ? "badge-secondary"
-                    : "badge-primary"
+                    ? "badge-primary"
+                    : "badge-secondary"
                 }`}
                 onClick={() => handleChange(lang.language)}
               >

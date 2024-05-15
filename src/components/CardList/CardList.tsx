@@ -16,7 +16,10 @@ const CardList = ({ repoList }: CardListProps) => {
           </figure>
           <div className="card-body">
             <h2 className="card-title">
-              Projeto <a href={repo.html_url}>{repo.name}</a>
+              Projeto
+              <a target="_blank" className="link" href={repo.html_url}>
+                {repo.name}
+              </a>
             </h2>
             <p>{repo.description}</p>
             <p>
@@ -37,7 +40,10 @@ const CardList = ({ repoList }: CardListProps) => {
       <div className="card w-96 bg-primary text-primary-content">
         <div className="card-body">
           <h2 className="card-title">
-            Projeto <a href={repo.html_url}>{repo.name}</a>
+            <img src={imgUrl} alt={repo.language} />
+            <a target="_blank" href={repo.html_url}>
+              {repo.name}
+            </a>
           </h2>
           <p>{repo.description}</p>
           <p>
@@ -49,8 +55,12 @@ const CardList = ({ repoList }: CardListProps) => {
             {new Date(repo.pushed_at).toLocaleString()}
           </p>
           Criado em: {new Date(repo.created_at).toLocaleString()}
-          <div className="card-actions justify-end">
-            <img src={imgUrl} alt={repo.language} />
+          <div className="card-actions justify-center">
+            <button className="btn btn-active btn-neutral">
+              <a target="_blank" href={repo.html_url}>
+                Ver no github
+              </a>
+            </button>
           </div>
         </div>
       </div>
