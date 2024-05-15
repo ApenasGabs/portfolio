@@ -19,10 +19,10 @@ const Home = () => {
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
   const [isModalOpen, setIsModalOpen] = useState(true);
 
-  const handleChange = (tag: string, checked: boolean) => {
-    const nextSelectedTags = checked
-      ? [...selectedTags, tag]
-      : selectedTags.filter((t) => t !== tag);
+  const handleChange = (tag: string) => {
+    const nextSelectedTags = selectedTags.includes(tag)
+      ? selectedTags.filter((t) => t !== tag)
+      : [...selectedTags, tag];
     setSelectedTags(nextSelectedTags);
   };
 
@@ -97,6 +97,24 @@ const Home = () => {
     }
   }, [repos, selectedTags]);
 
+  useEffect(() => {
+    const interval = setInterval(() => {
+      if (scrollContainerRef.current) {
+        const container = scrollContainerRef.current;
+        if (
+          container.scrollWidth - container.scrollLeft <=
+          container.offsetWidth
+        ) {
+          container.scrollLeft = 0;
+        } else {
+          container.scrollLeft += 1;
+        }
+      }
+    }, 10);
+
+    return () => clearInterval(interval);
+  }, []);
+
   return (
     <>
       <Modal
@@ -109,23 +127,22 @@ const Home = () => {
           {langs &&
             langs.map<ReactNode>((lang) => (
               <div
-                className="badge badge-primary cursor-pointer"
                 key={lang.language}
+                className={`badge cursor-pointer ${
+                  selectedTags.includes(lang.language)
+                    ? "badge-primary"
+                    : "badge-secondary"
+                }`}
+                onClick={() => handleChange(lang.language)}
               >
-                <input
-                  type="checkbox"
-                  checked={selectedTags.includes(lang.language)}
-                  onChange={(e) =>
-                    handleChange(lang.language, e.target.checked)
-                  }
-                  className="hidden"
-                />
-                <span>{lang.language}</span>
+                {lang.language}
               </div>
             ))}
         </div>
       </div>
-      {filteredRepos && <CardList repoList={filteredRepos} />}
+      <div className="overflow-x-auto p-4" ref={scrollContainerRef}>
+        {filteredRepos && <CardList repoList={filteredRepos} />}
+      </div>
     </>
   );
 };

@@ -17,5 +17,4 @@ export const StyledTagContainer = styled.div`
   background: red;
   display: flex;
   flex-direction: column;
-  /* align-items: end; */
 `;
