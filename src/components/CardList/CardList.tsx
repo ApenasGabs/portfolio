@@ -4,7 +4,9 @@ interface CardListProps {
 }
 const CardList = ({ repoList }: CardListProps) => {
   return repoList.map((repo) => {
-    const language = repo.language ?? "";
+    const language = (repo.language ?? "").toLowerCase();
+    console.log("language: ", language);
+
     const imgUrl = `https://skillicons.dev/icons?i=${language}`;
     if (!imgUrl) {
       return (
@@ -47,7 +49,9 @@ const CardList = ({ repoList }: CardListProps) => {
             {new Date(repo.pushed_at).toLocaleString()}
           </p>
           Criado em: {new Date(repo.created_at).toLocaleString()}
-          <div className="card-actions justify-end"></div>
+          <div className="card-actions justify-end">
+            <img src={imgUrl} alt={repo.language} />
+          </div>
         </div>
       </div>
     );

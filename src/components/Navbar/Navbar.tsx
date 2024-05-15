@@ -1,12 +1,25 @@
 const projectsLinks = [
-  <a target="_blank" href="https://econow.apenasgabs.dev">
+  <p className="text-xl">Deploys: </p>,
+  <a
+    className="btn btn-ghost text-xl"
+    target="_blank"
+    href="https://econow.apenasgabs.dev"
+  >
     EcoNow
   </a>,
-  <a target="_blank" href="https://ghibli.list.apenasgabs.dev">
+  <a
+    className="btn btn-ghost text-xl"
+    target="_blank"
+    href="https://ghibli.list.apenasgabs.dev"
+  >
     Ghibli film list
     <span className="badge badge-sm badge-warning">NEW</span>
   </a>,
-  <a target="_blank" href="https://apenasblog.vercel.app/">
+  <a
+    className="btn btn-ghost text-xl"
+    target="_blank"
+    href="https://apenasblog.vercel.app/"
+  >
     ApenasBlog
   </a>,
 ];

@@ -130,8 +130,8 @@ const Home = () => {
                 key={lang.language}
                 className={`badge cursor-pointer ${
                   selectedTags.includes(lang.language)
-                    ? "badge-primary"
-                    : "badge-secondary"
+                    ? "badge-secondary"
+                    : "badge-primary"
                 }`}
                 onClick={() => handleChange(lang.language)}
               >
@@ -140,7 +140,10 @@ const Home = () => {
             ))}
         </div>
       </div>
-      <div className="flex flex-wrap justify-between gap-2 p-5" ref={scrollContainerRef}>
+      <div
+        className="flex flex-wrap justify-between gap-2 p-5"
+        ref={scrollContainerRef}
+      >
         {filteredRepos && <CardList repoList={filteredRepos} />}
       </div>
     </>
