@@ -1,13 +1,11 @@
 import { ReactNode, useEffect, useRef, useState } from "react";
 import axios from "axios";
-import {   Card, Flex, message, Tag } from "antd";
+import { Card, Flex, message, Tag } from "antd";
 
 import { ReposProps } from "../../types";
-import { StyledTagContainer } from "./Home.styles";
+import { StyledCardProps, StyledHomeContainer, StyledTagContainer } from "./Home.styles";
 import Modal from "../../components/Modal/Modal";
-// import { StyledModalContent } from "../../components/Modal/Modal.styles";
 
- 
 interface UserLangs {
   language: string;
   quantity: number;
@@ -118,7 +116,10 @@ const Home = () => {
 
   return (
     <>
-    <Modal  isModalOpen={isModalOpen} onClose={ ()=>setIsModalOpen((prev) => !prev)}/>
+      <Modal
+        isModalOpen={isModalOpen}
+        onClose={() => setIsModalOpen((prev) => !prev)}
+      />
       <StyledTagContainer>
         <Flex gap={4} wrap="wrap" align="center">
           <span>Categories:</span>

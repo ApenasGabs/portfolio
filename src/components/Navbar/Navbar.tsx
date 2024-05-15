@@ -1,72 +1,56 @@
-import { Menu, MenuProps } from "antd";
-import { useState } from "react";
-
-type MenuItem = Required<MenuProps>["items"][number];
-
-const items: MenuItem[] = [
-  {
-    label: (
-      <a target="_blank" href="https://econow.apenasgabs.dev">
-        EcoNow
-      </a>
-    ),
-    key: "EcoNow",
-  },
-  {
-    key: "apenasblog",
-    label: (
-      <a target="_blank" href="https://apenasblog.vercel.app/">
-        ApenasBlog
-      </a>
-    ),
-  },
-  {
-    key: "apenasblog",
-    label: (
-      <a target="_blank" href="https://ghibli.list.apenasgabs.dev">
-        Ghibli film list
-      </a>
-    ),
-  },
-  // {
-  //   label: "Navigation Three - Submenu",
-  //   key: "SubMenu",
-  //   icon: <SettingOutlined />,
-  //   children: [
-  //     {
-  //       type: "group",
-  //       label: "Item 1",
-  //       children: [
-  //         { label: "Option 1", key: "setting:1" },
-  //         { label: "Option 2", key: "setting:2" },
-  //       ],
-  //     },
-  //     {
-  //       type: "group",
-  //       label: "Item 2",
-  //       children: [
-  //         { label: "Option 3", key: "setting:3" },
-  //         { label: "Option 4", key: "setting:4" },
-  //       ],
-  //     },
-  //   ],
-  // },
+const projectsLinks = [
+  <a target="_blank" href="https://econow.apenasgabs.dev">
+    EcoNow
+  </a>,
+  <a target="_blank" href="https://ghibli.list.apenasgabs.dev">
+    Ghibli film list
+    <span className="badge badge-sm badge-warning">NEW</span>
+  </a>,
+  <a target="_blank" href="https://apenasblog.vercel.app/">
+    ApenasBlog
+  </a>,
 ];
 const Navbar = () => {
-  const [current, setCurrent] = useState("mail");
-
-  const onClick: MenuProps["onClick"] = (e) => {
-    console.log("click ", e);
-    setCurrent(e.key);
-  };
-
   return (
-    <Menu
-      onClick={onClick}
-      selectedKeys={[current]}
-      mode="horizontal"
-      items={items}
-    />
+    <div className="navbar bg-base-100">
+      <div className="navbar-start">
+        <div className="dropdown">
+          <div tabIndex={0} role="button" className="btn btn-ghost lg:hidden">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              className="h-5 w-5"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth="2"
+                d="M4 6h16M4 12h8m-8 6h16"
+              />
+            </svg>
+          </div>
+          <ul
+            tabIndex={0}
+            className="menu menu-sm dropdown-content mt-3 z-[1] p-2 shadow bg-base-100 rounded-box w-52"
+          >
+            {projectsLinks.map((projectLink) => (
+              <li>{projectLink}</li>
+            ))}
+          </ul>
+        </div>
+        {/* <a className="btn btn-ghost text-xl">daisyUI</a> */}
+      </div>
+      <div className="navbar-center hidden lg:flex">
+        <ul className="menu menu-horizontal px-1">
+          {projectsLinks.map((projectLink) => (
+            <li>{projectLink}</li>
+          ))}
+        </ul>
+      </div>
+      <div className="navbar-end" />
+    </div>
   );
 };
 
