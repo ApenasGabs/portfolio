@@ -1,10 +1,11 @@
 import { ReactNode, useEffect, useRef, useState } from "react";
 import axios from "axios";
-import { Card, Flex, message, Tag } from "antd";
+import { Flex, message, Tag } from "antd";
 
 import { ReposProps } from "../../types";
-import { StyledCardProps, StyledHomeContainer, StyledTagContainer } from "./Home.styles";
+import { StyledHomeContainer, StyledTagContainer } from "./Home.styles";
 import Modal from "../../components/Modal/Modal";
+import CardList from "../../components/CardList/CardList";
 
 interface UserLangs {
   language: string;
@@ -136,37 +137,7 @@ const Home = () => {
         </Flex>
       </StyledTagContainer>
       <StyledHomeContainer ref={scrollContainerRef}>
-        {filteredRepos &&
-          filteredRepos.map((repo) => {
-            return (
-              <Card
-                title={
-                  <>
-                    <a href={repo.html_url}>{repo.name}</a>
-                    {repo.language && (
-                      <img
-                        src={`https://skillicons.dev/icons?i=${repo.language.toLowerCase()}`}
-                        alt={repo.language}
-                      />
-                    )}
-                  </>
-                }
-                bordered={false}
-                style={StyledCardProps}
-              >
-                {repo.description && <p>{repo.description}</p>}
-                <p>
-                  Ultima atualização:
-                  {new Date(repo.updated_at).toLocaleString()}
-                </p>
-                <p>
-                  Ultimo push:
-                  {new Date(repo.pushed_at).toLocaleString()}
-                </p>
-                <p>Criado em: {new Date(repo.created_at).toLocaleString()}</p>
-              </Card>
-            );
-          })}
+        {filteredRepos && <CardList repoList={filteredRepos} />}
       </StyledHomeContainer>
     </>
   );
