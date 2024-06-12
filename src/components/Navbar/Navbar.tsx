@@ -10,10 +10,26 @@ const projectsLinks = [
   <a
     className="btn btn-ghost text-xl"
     target="_blank"
+    href="https://guia.apenasgabs.dev"
+  >
+    Guia de TI
+    <span className="badge badge-sm badge-warning">NEW</span>
+  </a>,
+  <a
+    className="btn btn-ghost text-xl"
+    target="_blank"
     href="https://ghibli.list.apenasgabs.dev"
   >
     Ghibli film list
     <span className="badge badge-sm badge-warning">NEW</span>
+  </a>,
+  <a
+    className="btn btn-ghost text-xl"
+    target="_blank"
+    href="https://devpedia.apenasgabs.dev"
+  >
+    DevPedia Tools
+    <span className="badge badge-sm badge-warning">COMING SOON</span>
   </a>,
   <a
     className="btn btn-ghost text-xl"
