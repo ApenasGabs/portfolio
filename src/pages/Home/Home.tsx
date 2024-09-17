@@ -1,9 +1,9 @@
-import { ReactNode, useEffect, useRef, useState } from "react";
 import axios from "axios";
+import { ReactNode, useEffect, useRef, useState } from "react";
 
-import { ReposProps } from "../../types";
-import Modal from "../../components/Modal/Modal";
 import CardList from "../../components/CardList/CardList";
+import Modal from "../../components/Modal/Modal";
+import { ReposProps } from "../../types";
 
 interface UserLangs {
   language: string;
@@ -78,7 +78,12 @@ const Home = () => {
         setSelectedTags(
           userLangs
             .map((lang) => lang.language)
-            .filter((lang) => lang === "Java" || lang === "TypeScript")
+            .filter(
+              (lang) =>
+                lang === "Java" ||
+                lang === "TypeScript" ||
+                lang === "JavaScript"
+            )
         );
         setFilteredRepos(allRepos);
       } catch (error) {

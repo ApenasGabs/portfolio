@@ -13,7 +13,22 @@ const projectsLinks = [
     href="https://guia.apenasgabs.dev"
   >
     Guia de TI
+  </a>,
+  <a
+    className="btn btn-ghost text-xl"
+    target="_blank"
+    href="https://querocasa.apenasgabs.dev"
+  >
+    Quero 🏠
     <span className="badge badge-sm badge-warning">NEW</span>
+  </a>,
+  <a
+    className="btn btn-ghost text-xl"
+    target="_blank"
+    href="https://querotrampo.apenasgabs.dev"
+  >
+    Quero 👨‍💻
+    <span className="badge badge-sm badge-warning">COMING SOON</span>
   </a>,
   <a
     className="btn btn-ghost text-xl"
@@ -21,7 +36,6 @@ const projectsLinks = [
     href="https://ghibli.list.apenasgabs.dev"
   >
     Ghibli film list
-    <span className="badge badge-sm badge-warning">NEW</span>
   </a>,
   <a
     className="btn btn-ghost text-xl"
@@ -29,7 +43,7 @@ const projectsLinks = [
     href="https://devpedia.apenasgabs.dev"
   >
     DevPedia Tools
-    <span className="badge badge-sm badge-warning">COMING SOON</span>
+    <span className="badge badge-sm badge-warning">ARCHIVED</span>
   </a>,
   <a
     className="btn btn-ghost text-xl"
@@ -69,7 +83,6 @@ const Navbar = () => {
             ))}
           </ul>
         </div>
-        {/* <a className="btn btn-ghost text-xl">daisyUI</a> */}
       </div>
       <div className="navbar-center hidden lg:flex">
         <ul className="menu menu-horizontal px-1">
