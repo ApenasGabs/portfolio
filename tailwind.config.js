@@ -1,5 +1,6 @@
 /** @type {import('tailwindcss').Config} */
 export default {
+  darkMode: "class",
   content: [
     "./index.html",
     "./src/**/*.{js,ts,jsx,tsx}",
@@ -7,32 +8,23 @@ export default {
     "node_modules/react-daisyui/dist/**/*.js",
   ],
   theme: {
-    extend: {},
-  },
-  daisyui: {
-    themes: [
-      {
-        mytheme: {
-          primary: "#ffff",
-
-          secondary: "#00a7b9",
-
-          accent: "#ff9a00",
-
-          neutral: "#262d2c",
-
-          "base-100": "#27292e",
-
-          info: "#00d3ff",
-
-          success: "#00b94e",
-
-          warning: "#ff9e00",
-
-          error: "#ff95af",
-        },
+    extend: {
+      colors: {
+        primary: "#ec5b13",
+        "background-light": "#f3f4f6",
+        "background-dark": "#111827",
+        "card-light": "#ffffff",
+        "card-dark": "#1f2937",
+        "text-light": "#1f2937",
+        "text-dark": "#f9fafb",
+        "border-light": "#e5e7eb",
+        "border-dark": "#374151",
+        "waka-pink": "#eb4d8a",
       },
-    ],
+      fontFamily: {
+        sans: ["Public Sans", "sans-serif"],
+      },
+    },
   },
   plugins: [require("daisyui")],
 };

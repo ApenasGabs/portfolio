@@ -18,6 +18,6 @@ module.exports = {
       { allowConstantExport: true },
     ],
     "import/order": ["error", { "newlines-between": "always" }],
-    "unused-imports/no-unused-imports-ts": "error",
+    "unused-imports/no-unused-imports": "error",
   },
 };
