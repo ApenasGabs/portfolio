@@ -15,6 +15,8 @@ const PROJECTS: Project[] = [
   { name: "Quero 🏠", url: "https://querocasa.apenasgabs.dev", badge: "NEW", badgeClass: "bg-yellow-100 text-yellow-800" },
   { name: "Quero 👨‍💻", url: "https://querotrampo.apenasgabs.dev", badge: "SOON", badgeClass: "bg-orange-100 text-orange-800", disabled: true },
   { name: "Ghibli List", url: "https://ghibli.list.apenasgabs.dev", color: "bg-purple-500" },
+  { name: "Simple List", url: "https://simplelist.apenasgabs.dev", color: "bg-teal-500" },
+  { name: "Meu Estoque", url: "https://meuestoque.apenasgabs.dev", color: "bg-rose-500" },
   { name: "ApenasBlog", url: "https://apenasblog.vercel.app", color: "bg-indigo-500" },
 ];
 

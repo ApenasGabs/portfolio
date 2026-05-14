@@ -26,7 +26,7 @@ const Dashboard = (): ReactElement => {
   useEffect(() => {
     document.title = isOverview
       ? "Todos os Repositórios | ApenasGabs — Gabriel Rodrigues"
-      : "ApenasGabs — Gabriel Rodrigues | Desenvolvedor Front-End React";
+      : "ApenasGabs — Gabriel Rodrigues | Full Stack Software Engineer";
   }, [isOverview]);
 
   const [repos, setRepos] = useState<ReposProps[]>([]);
