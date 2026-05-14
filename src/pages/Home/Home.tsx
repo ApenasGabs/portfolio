@@ -23,6 +23,12 @@ const Dashboard = (): ReactElement => {
   const location = useLocation();
   const isOverview = location.pathname === "/overview";
 
+  useEffect(() => {
+    document.title = isOverview
+      ? "Todos os Repositórios | ApenasGabs — Gabriel Rodrigues"
+      : "ApenasGabs — Gabriel Rodrigues | Desenvolvedor Front-End React";
+  }, [isOverview]);
+
   const [repos, setRepos] = useState<ReposProps[]>([]);
   const [langs, setLangs] = useState<UserLang[]>([]);
   const [selectedLangs, setSelectedLangs] = useState<string[]>([]);

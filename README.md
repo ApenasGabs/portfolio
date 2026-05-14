@@ -1,30 +1,57 @@
-# React + TypeScript + Vite
+# ApenasGabs — Portfólio GitHub Dashboard
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+> Dashboard interativo do meu perfil GitHub — construído com React, TypeScript e Tailwind CSS.
 
-Currently, two official plugins are available:
+🌐 **[apenasgabs.dev](https://apenasgabs.dev)**
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## Sobre mim
 
-## Expanding the ESLint configuration
+Me chamo **Gabriel Rodrigues**, mas pode me chamar de **Gabs**!
 
-If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
+- 💼 Desenvolvedor Front-End com ~4 anos de experiência, atuando principalmente com React, TypeScript e Next.js
+- 🔭 Antes de dev, fui QA por pouco mais de 3 anos — o que me deu uma visão orientada à qualidade e testes
+- 🎓 Formado em **Análise e Desenvolvimento de Sistemas** — UniMetrocamp
+- 🎓 **Eletroeletrônica** — COTUCA, Colégio Técnico da Unicamp
+- 🎓 **Especialização em Tecnologias Microsoft** — Extecamp, Unicamp
+- 🎓 **Pós-graduação em Aplicativos Móveis Multiplataforma** — Descomplica Faculdade Digital
+- 📍 Baseado em Campinas, SP
 
-- Configure the top-level `parserOptions` property like this:
+## Stack & Competências
 
-```js
-export default {
-  // other rules...
-  parserOptions: {
-    ecmaVersion: 'latest',
-    sourceType: 'module',
-    project: ['./tsconfig.json', './tsconfig.node.json'],
-    tsconfigRootDir: __dirname,
-  },
-}
+| Área | Tecnologias |
+|---|---|
+| **Front-End** | HTML, CSS, JavaScript, TypeScript, React, Next.js, PWA |
+| **Estilização** | Tailwind CSS, Styled Components, SASS |
+| **Back-End** | Node.js, Java, Spring Boot, Spring Security, Spring MVC, Python, GoLang |
+| **Banco de dados** | SQL, MySQL, H2, Hibernate, JPA, JDBC |
+| **API** | RESTful API, GraphQL, SOAP, Flask |
+| **DevOps** | Docker, Docker Compose, AWS, Maven, CI/CD |
+| **Qualidade** | Git, GitHub, Scrum, Kanban, Unit Testing, OOP, Design Patterns |
+| **Design** | Figma, Whimsical, VS Code, Visual Studio |
+
+## Projetos em Destaque
+
+| Projeto | Link | Status |
+|---|---|---|
+| EcoNow | [econow.apenasgabs.dev](https://econow.apenasgabs.dev) | ✅ Live |
+| Guia de TI | [guia.apenasgabs.dev](https://guia.apenasgabs.dev) | ✅ Live |
+| Quero 🏠 | [querocasa.apenasgabs.dev](https://querocasa.apenasgabs.dev) | 🆕 Novo |
+| Ghibli List | [ghibli.list.apenasgabs.dev](https://ghibli.list.apenasgabs.dev) | ✅ Live |
+| ApenasBlog | [apenasblog.vercel.app](https://apenasblog.vercel.app) | ✅ Live |
+
+## Rodando localmente
+
+```bash
+yarn install
+yarn dev
 ```
 
-- Replace `plugin:@typescript-eslint/recommended` to `plugin:@typescript-eslint/recommended-type-checked` or `plugin:@typescript-eslint/strict-type-checked`
-- Optionally add `plugin:@typescript-eslint/stylistic-type-checked`
-- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and add `plugin:react/recommended` & `plugin:react/jsx-runtime` to the `extends` list
+Acesse em: `http://localhost:5173`
+
+## Tech Stack deste portfólio
+
+- **React 18** + **TypeScript**
+- **Vite** como bundler
+- **Tailwind CSS** para estilização
+- **React Router DOM v7** para navegação
+- **GitHub REST API** para dados em tempo real
