@@ -1,7 +1,7 @@
 import type { GraphEdge, GraphNode } from "../../types/graph.ts";
 import { computeGraphHighlight } from "../graphFilter.ts";
 
-function assertEqual<T>(actual: T, expected: T, message: string): void {
+const assertEqual = <T>(actual: T, expected: T, message: string): void => {
   if (actual !== expected) {
     throw new Error(`${message} — expected ${String(expected)}, got ${String(actual)}`);
   }

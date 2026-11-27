@@ -24,7 +24,7 @@ interface PositionedNode extends GraphNode {
   z: number;
 }
 
-function compute3DLayout(nodes: GraphNode[], edges: GraphEdge[]): Map<string, PositionedNode> {
+const compute3DLayout = (nodes: GraphNode[], edges: GraphEdge[]): Map<string, PositionedNode> => {
   const posMap = new Map<string, PositionedNode>();
   const hubs = nodes.filter((n) => n.type !== "repo");
   const repos = nodes.filter((n) => n.type === "repo");
@@ -117,7 +117,7 @@ function compute3DLayout(nodes: GraphNode[], edges: GraphEdge[]): Map<string, Po
   return posMap;
 }
 
-function makeLabelSprite(text: string, badgeColor: string, isHub: boolean): THREE.Sprite {
+const makeLabelSprite = (text: string, badgeColor: string, isHub: boolean): THREE.Sprite => {
   const canvas = document.createElement("canvas");
   const ctx = canvas.getContext("2d")!;
   const fontSize = isHub ? 26 : 22;
@@ -192,8 +192,7 @@ const Canvas3D = ({
     const height = container.clientHeight || 420;
     renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
     renderer.setSize(width, height);
-    container.innerHTML = "";
-    container.appendChild(renderer.domElement);
+    container.replaceChildren(renderer.domElement);
 
     const scene = new THREE.Scene();
     scene.fog = new THREE.FogExp2(0x070a0f, 0.011);

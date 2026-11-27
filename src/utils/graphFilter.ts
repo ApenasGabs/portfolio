@@ -11,13 +11,13 @@ export interface GraphHighlightState {
   bridgeEdgeKeys: Set<string>;
 }
 
-export function computeGraphHighlight(
+export const computeGraphHighlight = (
   _nodes: GraphNode[],
   edges: GraphEdge[],
   selectedFilterIds: string[],
   focusedRepoId: string | null,
   matchMode: FilterMatchMode
-): GraphHighlightState {
+): GraphHighlightState => {
   const intersectionRepoIds = new Set<string>();
   const partialRepoIds = new Set<string>();
   const activeNodeIds = new Set<string>();
