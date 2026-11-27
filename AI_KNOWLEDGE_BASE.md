@@ -39,3 +39,8 @@ ELSE maintain current configuration
 - [x] Campo `engines` adicionado ao `package.json`.
 - [x] Documentação da mudança no `AI_KNOWLEDGE_BASE.md`.
 - [x] Instrução para atualizar as configurações no dashboard da Vercel fornecida ao usuário.
+
+
+### [2026-11-27] Reformulação Visual Obsidian Glass & Knowledge Graph Unificado (3D + 2D)
+
+Substituição completa do `daisyUI` por Tailwind CSS puro (`.glass-panel` compatível com Dark/Light mode) e introdução do `UnifiedGraphStage` (`3D Neural` em Three.js com `React.lazy` + `2D Obsidian` em Canvas 2D force-directed), com encolhimento suave no scroll, modo minimizado e indexação offline via GitHub GraphQL (`scripts/build-graph-index.mjs` + `.github/workflows/update-graph-index.yml`).

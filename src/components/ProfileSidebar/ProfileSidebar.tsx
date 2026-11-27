@@ -1,86 +1,76 @@
 import type { ReactElement } from "react";
-import { useEffect, useState } from "react";
 
-interface GitHubUser {
-  login: string;
-  name: string | null;
-  avatar_url: string;
-  bio: string | null;
-  location: string | null;
-  blog: string | null;
-  public_repos: number;
-  followers: number;
-  following: number;
-  html_url: string;
-}
+import type { GraphUser as GitHubUser } from "../../types/graph";
 
 interface ProfileSidebarProps {
+  user: GitHubUser | null;
+  loading: boolean;
   totalStars?: number;
-  topRepos?: Array<{ name: string; stargazers_count: number; html_url: string; language: string | null; updated_at: string }>;
+  topRepos?: Array<{
+    name: string;
+    stargazers_count: number;
+    html_url: string;
+    language: string | null;
+    updated_at: string;
+  }>;
 }
 
-const ProfileSidebar = ({ totalStars = 0, topRepos = [] }: ProfileSidebarProps): ReactElement => {
-  const [user, setUser] = useState<GitHubUser | null>(null);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    const fetchUser = async () => {
-      try {
-        const res = await fetch("https://api.github.com/users/apenasgabs");
-        if (res.ok) {
-          const data: GitHubUser = await res.json();
-          setUser(data);
-        }
-      } catch (err) {
-        console.error("Failed to fetch user:", err);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchUser();
-  }, []);
-
+const ProfileSidebar = ({
+  user,
+  loading,
+  totalStars = 0,
+  topRepos = [],
+}: ProfileSidebarProps): ReactElement => {
   return (
-    <aside className="lg:col-span-4 space-y-6">
+    <aside className="lg:col-span-4 space-y-5">
       {/* Profile Card */}
-      <div className="bg-card-light dark:bg-card-dark rounded-2xl shadow-lg border border-border-light dark:border-border-dark p-6 text-center lg:text-left relative overflow-hidden">
-        <div className="absolute top-0 left-0 w-full h-24 bg-gradient-to-r from-orange-500/20 to-primary/20 dark:from-orange-500/40 dark:to-primary/40 pointer-events-none" />
+      <div className="glass-panel rounded-2xl overflow-hidden">
+        <div
+          className="h-20 border-b border-border-light dark:border-border-dark"
+          style={{
+            background:
+              "radial-gradient(circle at 20% 20%, rgba(56,189,248,0.24), transparent 62%), radial-gradient(circle at 85% 30%, rgba(249,115,22,0.16), transparent 58%), linear-gradient(135deg, rgba(13,23,38,0.42) 0%, rgba(17,24,39,0.28) 100%)",
+          }}
+        />
 
-        <div className="relative pt-12">
+        <div className="px-5 pb-6">
           {loading ? (
-            <div className="animate-pulse flex flex-col items-center lg:items-start gap-4">
-              <div className="h-24 w-24 rounded-full bg-gray-200 dark:bg-gray-700 mx-auto lg:mx-0" />
-              <div className="h-5 w-40 bg-gray-200 dark:bg-gray-700 rounded mx-auto lg:mx-0" />
-              <div className="h-4 w-28 bg-gray-200 dark:bg-gray-700 rounded mx-auto lg:mx-0" />
-              <div className="h-16 w-full bg-gray-200 dark:bg-gray-700 rounded" />
+            <div className="animate-pulse flex flex-col gap-3 -mt-9">
+              <div className="h-20 w-20 rounded-2xl bg-slate-200 dark:bg-slate-800" />
+              <div className="h-5 w-40 bg-slate-200 dark:bg-slate-800 rounded" />
+              <div className="h-4 w-28 bg-slate-200 dark:bg-slate-800 rounded" />
+              <div className="h-14 w-full bg-slate-200 dark:bg-slate-800 rounded" />
             </div>
           ) : user ? (
             <>
               <img
                 alt={`Avatar de ${user.login}`}
-                className="h-24 w-24 rounded-full border-4 border-card-light dark:border-card-dark mx-auto lg:mx-0 shadow-md"
+                className="h-20 w-20 rounded-2xl border-[3px] border-white dark:border-[#0b1018] -mt-10 shadow-lg object-cover bg-slate-800"
                 src={user.avatar_url}
               />
-              <div className="mt-4">
-                <h2 className="text-2xl font-bold">{user.name ?? user.login}</h2>
-                <p className="text-gray-500 dark:text-gray-400">@{user.login}</p>
+              <div className="mt-3">
+                <h1 className="font-display text-2xl font-bold tracking-tight">
+                  {user.name ?? user.login}
+                </h1>
+                <p className="font-mono text-xs text-sky-600 dark:text-primary mt-0.5">
+                  @{user.login}
+                </p>
               </div>
               {user.bio && (
-                <p className="mt-4 text-sm text-gray-600 dark:text-gray-300 leading-relaxed">
+                <p className="mt-3 text-sm text-slate-600 dark:text-slate-300 leading-relaxed">
                   {user.bio}
                 </p>
               )}
-              <div className="flex flex-wrap gap-4 mt-6 text-sm text-gray-600 dark:text-gray-400 justify-center lg:justify-start">
+              <div className="flex flex-wrap gap-3.5 mt-4 text-xs text-slate-600 dark:text-slate-400">
                 {user.location && (
                   <div className="flex items-center gap-1">
-                    <span className="material-symbols-outlined text-base">place</span>
+                    <span className="material-symbols-outlined text-sm text-accent-warm">place</span>
                     <span>{user.location}</span>
                   </div>
                 )}
                 {user.blog && (
                   <div className="flex items-center gap-1">
-                    <span className="material-symbols-outlined text-base">link</span>
+                    <span className="material-symbols-outlined text-sm">link</span>
                     <a
                       className="hover:text-primary transition-colors truncate max-w-[160px]"
                       href={user.blog.startsWith("http") ? user.blog : `https://${user.blog}`}
@@ -92,7 +82,7 @@ const ProfileSidebar = ({ totalStars = 0, topRepos = [] }: ProfileSidebarProps):
                   </div>
                 )}
                 <div className="flex items-center gap-1">
-                  <span className="material-symbols-outlined text-base">hub</span>
+                  <span className="material-symbols-outlined text-sm">hub</span>
                   <a
                     className="hover:text-primary transition-colors"
                     href={user.html_url}
@@ -104,54 +94,51 @@ const ProfileSidebar = ({ totalStars = 0, topRepos = [] }: ProfileSidebarProps):
                 </div>
               </div>
 
-              <div className="grid grid-cols-3 gap-2 mt-6 pt-6 border-t border-border-light dark:border-border-dark text-center">
+              <div className="grid grid-cols-3 gap-2 mt-5 pt-4 border-t border-border-light dark:border-border-dark text-center">
                 <div>
-                  <span className="block text-xl font-bold text-gray-900 dark:text-white">
+                  <span className="block font-display text-xl font-bold tabular-nums">
                     {user.public_repos}
                   </span>
-                  <span className="text-xs text-gray-500 uppercase tracking-wide">Repos</span>
+                  <span className="text-[11px] text-slate-500">Repos</span>
                 </div>
                 <div>
-                  <span className="block text-xl font-bold text-gray-900 dark:text-white">
+                  <span className="block font-display text-xl font-bold tabular-nums">
                     {user.followers >= 1000
                       ? `${(user.followers / 1000).toFixed(1)}k`
                       : user.followers}
                   </span>
-                  <span className="text-xs text-gray-500 uppercase tracking-wide">Seguidores</span>
+                  <span className="text-[11px] text-slate-500">Seguidores</span>
                 </div>
                 <div>
-                  <span className="block text-xl font-bold text-gray-900 dark:text-white">
+                  <span className="block font-display text-xl font-bold tabular-nums">
                     {user.following}
                   </span>
-                  <span className="text-xs text-gray-500 uppercase tracking-wide">Seguindo</span>
+                  <span className="text-[11px] text-slate-500">Seguindo</span>
                 </div>
               </div>
             </>
           ) : (
-            <p className="text-sm text-gray-500">Erro ao carregar perfil.</p>
+            <p className="text-sm text-slate-500 pt-4">Erro ao carregar perfil.</p>
           )}
         </div>
       </div>
 
       {/* GitHub Stats Card */}
-      <div className="bg-card-light dark:bg-card-dark rounded-2xl shadow-lg border border-border-light dark:border-border-dark p-6">
-        <h3 className="text-lg font-bold mb-6 flex items-center gap-2 text-waka-pink">
-          <span className="material-symbols-outlined">analytics</span>
+      <div className="glass-panel rounded-2xl p-5">
+        <h2 className="font-display text-sm font-bold mb-4 flex items-center gap-2">
+          <span className="w-2 h-2 rounded-sm bg-primary" />
           GitHub Stats
-        </h3>
-        <div className="grid grid-cols-1 gap-4">
+        </h2>
+        <div className="space-y-3">
           {[
-            { icon: "grade", color: "text-yellow-500", label: "Total de Stars", val: totalStars.toString() },
-            { icon: "source", color: "text-blue-500", label: "Repos Públicos", val: user?.public_repos?.toString() ?? "—" },
-            { icon: "group", color: "text-green-500", label: "Seguidores", val: user?.followers?.toString() ?? "—" },
-            { icon: "person_add", color: "text-purple-500", label: "Seguindo", val: user?.following?.toString() ?? "—" },
-          ].map((stat, i) => (
-            <div key={i} className="flex items-center justify-between">
-              <div className="flex items-center gap-3">
-                <span className={`material-symbols-outlined ${stat.color}`}>{stat.icon}</span>
-                <span className="text-sm font-medium">{stat.label}</span>
-              </div>
-              <span className="font-bold text-lg">{stat.val}</span>
+            { label: "Total de Stars", val: totalStars.toString() },
+            { label: "Repos Públicos", val: user?.public_repos?.toString() ?? "—" },
+            { label: "Seguidores", val: user?.followers?.toString() ?? "—" },
+            { label: "Seguindo", val: user?.following?.toString() ?? "—" },
+          ].map((stat) => (
+            <div key={stat.label} className="flex items-center justify-between text-sm">
+              <span className="text-slate-600 dark:text-slate-400">{stat.label}</span>
+              <span className="font-mono font-semibold tabular-nums">{stat.val}</span>
             </div>
           ))}
         </div>
@@ -159,34 +146,29 @@ const ProfileSidebar = ({ totalStars = 0, topRepos = [] }: ProfileSidebarProps):
 
       {/* Top Starred Repos */}
       {topRepos.length > 0 && (
-        <div className="bg-card-light dark:bg-card-dark rounded-2xl shadow-lg border border-border-light dark:border-border-dark p-6">
-          <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
-            <span className="material-symbols-outlined text-yellow-500 text-xl">star</span>
+        <div className="glass-panel rounded-2xl p-5">
+          <h2 className="font-display text-sm font-bold mb-4 flex items-center gap-2">
+            <span className="w-2 h-2 rounded-sm bg-amber-400" />
             Mais Estrelados
-          </h3>
-          <ul className="space-y-4">
+          </h2>
+          <ul className="space-y-3">
             {topRepos.slice(0, 4).map((repo) => (
               <li
                 key={repo.name}
-                className="flex items-center justify-between pb-3 border-b border-border-light dark:border-border-dark last:border-0 last:pb-0"
+                className="flex items-center justify-between pb-3 border-b border-border-light dark:border-border-dark last:border-0 last:pb-0 gap-2"
               >
-                <div className="flex items-center gap-3">
-                  <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center">
-                    <span className="material-symbols-outlined text-primary text-sm">code</span>
-                  </div>
-                  <div className="flex flex-col">
-                    <a
-                      className="font-medium text-sm hover:text-primary transition-colors"
-                      href={repo.html_url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                    >
-                      {repo.name}
-                    </a>
-                    <span className="text-xs text-gray-500">{repo.language ?? "—"}</span>
-                  </div>
+                <div className="min-w-0">
+                  <a
+                    className="font-semibold text-sm hover:text-primary transition-colors block truncate"
+                    href={repo.html_url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    {repo.name}
+                  </a>
+                  <span className="text-xs text-slate-500">{repo.language ?? "—"}</span>
                 </div>
-                <span className="text-xs font-semibold bg-gray-100 dark:bg-gray-700 px-2 py-1 rounded-md">
+                <span className="font-mono text-xs px-2 py-0.5 rounded-md bg-amber-400/10 border border-amber-400/20 text-amber-600 dark:text-amber-300 shrink-0">
                   ★ {repo.stargazers_count}
                 </span>
               </li>

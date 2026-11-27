@@ -10,43 +10,46 @@ interface LanguageStatsProps {
 }
 
 const LANG_COLORS: Record<string, string> = {
-  TypeScript: "bg-blue-500",
-  JavaScript: "bg-yellow-400",
-  Python: "bg-cyan-600",
-  Java: "bg-orange-700",
-  CSS: "bg-purple-500",
-  HTML: "bg-orange-500",
-  Rust: "bg-orange-800",
-  Go: "bg-cyan-500",
-  Shell: "bg-gray-600",
-  Vue: "bg-green-500",
-  Kotlin: "bg-violet-500",
-  Other: "bg-gray-400",
+  TypeScript: "bg-sky-400",
+  JavaScript: "bg-amber-400",
+  Python: "bg-teal-400",
+  Java: "bg-orange-500",
+  CSS: "bg-violet-400",
+  HTML: "bg-rose-400",
+  Rust: "bg-orange-600",
+  Go: "bg-cyan-400",
+  Shell: "bg-slate-400",
+  Vue: "bg-emerald-400",
+  Kotlin: "bg-purple-400",
+  Other: "bg-slate-500",
 };
 
 const getLangColor = (language: string): string =>
-  LANG_COLORS[language] ?? "bg-gray-400";
+  LANG_COLORS[language] ?? "bg-slate-400";
 
 const LanguageStats = ({ langs }: LanguageStatsProps): ReactElement => {
-  const total = langs.reduce((sum, l) => sum + l.quantity, 0);
-  const top = langs
+  const total = langs.reduce((sum, l) => sum + l.quantity, 0) || 1;
+  const top = [...langs]
     .sort((a, b) => b.quantity - a.quantity)
     .slice(0, 6)
     .map((l) => ({
       ...l,
-      percent: Math.round((l.quantity / total) * 100),
+      percent: Math.max(1, Math.round((l.quantity / total) * 100)),
     }));
 
   return (
-    <div className="bg-card-light dark:bg-card-dark rounded-2xl shadow-lg border border-border-light dark:border-border-dark p-8 mb-8">
-      <div className="flex items-center justify-between mb-8">
-        <h3 className="text-2xl font-bold text-waka-pink">Linguagens por Repo</h3>
+    <div className="glass-panel rounded-2xl p-6 mb-5">
+      <div className="flex items-center justify-between mb-5">
+        <h2 className="font-display text-base font-bold flex items-center gap-2">
+          <span className="w-2 h-2 rounded-sm bg-primary" />
+          Linguagens por Repo
+        </h2>
       </div>
 
-      <div className="w-full h-3 flex rounded-full overflow-hidden bg-gray-100 dark:bg-gray-800 mb-10">
-        {top.map((lang, idx) => (
+      <div className="w-full h-2.5 flex gap-0.5 rounded-full overflow-hidden bg-slate-200 dark:bg-white/[0.05] mb-6">
+        {top.map((lang) => (
           <div
-            key={idx}
+            key={lang.language}
             className={`h-full ${getLangColor(lang.language)}`}
             style={{ width: `${lang.percent}%` }}
             title={`${lang.language}: ${lang.percent}%`}
@@ -54,17 +57,17 @@ const LanguageStats = ({ langs }: LanguageStatsProps): ReactElement => {
         ))}
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-4">
-        {top.map((lang, idx) => (
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-3">
+        {top.map((lang) => (
           <div
-            key={idx}
-            className="flex items-center justify-between py-1 border-b border-border-light/50 dark:border-border-dark/50"
+            key={lang.language}
+            className="flex items-center justify-between py-1.5 border-b border-border-light/60 dark:border-white/[0.06]"
           >
-            <div className="flex items-center gap-3">
-              <span className={`w-3 h-3 rounded-full ${getLangColor(lang.language)}`} />
+            <div className="flex items-center gap-2.5">
+              <span className={`w-2.5 h-2.5 rounded-full ${getLangColor(lang.language)}`} />
               <span className="text-sm font-medium">{lang.language}</span>
             </div>
-            <span className="text-sm text-gray-500 dark:text-gray-400">
+            <span className="font-mono text-xs text-slate-500 dark:text-slate-400">
               {lang.quantity} repo{lang.quantity !== 1 ? "s" : ""} · {lang.percent}%
             </span>
           </div>

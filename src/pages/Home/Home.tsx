@@ -1,27 +1,38 @@
 import type { ReactElement } from "react";
-import { useEffect, useState } from "react";
-import { useNavigate, useLocation } from "react-router-dom";
-import axios from "axios";
+import { useEffect, useMemo, useState } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
 
-import FilterBar from "../../components/FilterBar/FilterBar";
+import GraphSelectorBar from "../../components/GraphSelectorBar/GraphSelectorBar";
 import LanguageStats from "../../components/LanguageStats/LanguageStats";
 import Pagination from "../../components/Pagination/Pagination";
 import ProfileSidebar from "../../components/ProfileSidebar/ProfileSidebar";
 import ProjectTabs from "../../components/ProjectTabs/ProjectTabs";
 import RepoCard from "../../components/RepoCard/RepoCard";
-import { ReposProps } from "../../types";
+import UnifiedGraphStage, {
+  type StageSizeMode,
+} from "../../components/UnifiedGraph/UnifiedGraphStage";
+import rawGraphData from "../../data/graphIndex.json";
+import type { GraphIndexData } from "../../types/graph";
+import { computeGraphHighlight, type FilterMatchMode } from "../../utils/graphFilter";
 
-interface UserLang {
-  language: string;
-  quantity: number;
-}
-
+const graphData = rawGraphData as unknown as GraphIndexData;
 const REPOS_PER_PAGE = 6;
 
-const Dashboard = (): ReactElement => {
+interface DashboardProps {
+  searchQuery?: string;
+}
+
+const Dashboard = ({ searchQuery = "" }: DashboardProps): ReactElement => {
   const navigate = useNavigate();
   const location = useLocation();
   const isOverview = location.pathname === "/overview";
+
+  const [selectedFilterIds, setSelectedFilterIds] = useState<string[]>([]);
+  const [focusedRepoId, setFocusedRepoId] = useState<string | null>(null);
+  const [matchMode, setMatchMode] = useState<FilterMatchMode>("AND");
+  const [sortBy, setSortBy] = useState("updated");
+  const [currentPage, setCurrentPage] = useState(1);
+  const [stageMode, setStageMode] = useState<StageSizeMode>("auto");
 
   useEffect(() => {
     document.title = isOverview
@@ -29,90 +40,84 @@ const Dashboard = (): ReactElement => {
       : "ApenasGabs — Gabriel Rodrigues | Full Stack Software Engineer";
   }, [isOverview]);
 
-  const [repos, setRepos] = useState<ReposProps[]>([]);
-  const [langs, setLangs] = useState<UserLang[]>([]);
-  const [selectedLangs, setSelectedLangs] = useState<string[]>([]);
-  const [sortBy, setSortBy] = useState("updated");
-  const [currentPage, setCurrentPage] = useState(1);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        setLoading(true);
-        let allRepos: ReposProps[] = [];
-        let page = 1;
-        let hasMore = true;
+    setCurrentPage(1);
+  }, [searchQuery, selectedFilterIds, matchMode]);
 
-        while (hasMore) {
-          const url = `https://api.github.com/users/apenasgabs/repos?per_page=100&page=${page}`;
-          const result = await axios.get<ReposProps[]>(url);
-          if (result.status === 200) {
-            allRepos = allRepos.concat(result.data);
-            hasMore = result.data.length === 100;
-            page++;
-          } else {
-            hasMore = false;
-          }
-        }
+  const handleToggleFilterNode = (nodeId: string) => {
+    setFocusedRepoId(null);
+    setSelectedFilterIds((prev) =>
+      prev.includes(nodeId) ? prev.filter((id) => id !== nodeId) : [...prev, nodeId]
+    );
+  };
 
-        const sorted = allRepos.sort(
-          (a, b) => new Date(b.updated_at).getTime() - new Date(a.updated_at).getTime()
-        );
-        setRepos(sorted);
+  const handleClearFilters = () => {
+    setSelectedFilterIds([]);
+    setFocusedRepoId(null);
+  };
 
-        const langCount = allRepos.reduce<Record<string, number>>((count, repo) => {
-          const lang = repo.language;
-          if (lang) {
-            count[lang] = (count[lang] ?? 0) + 1;
-          }
-          return count;
-        }, {});
+  const highlight = useMemo(
+    () =>
+      computeGraphHighlight(
+        graphData.nodes,
+        graphData.edges,
+        selectedFilterIds,
+        focusedRepoId,
+        matchMode
+      ),
+    [selectedFilterIds, focusedRepoId, matchMode]
+  );
 
-        const userLangs: UserLang[] = Object.entries(langCount).map(([language, quantity]) => ({
-          language,
-          quantity,
-        }));
-
-        setLangs(userLangs);
-        const defaultSelected = userLangs
-          .map((l) => l.language)
-          .filter((l) => ["Java", "TypeScript", "JavaScript"].includes(l));
-        setSelectedLangs(defaultSelected.length > 0 ? defaultSelected : userLangs.map((l) => l.language));
-      } catch (err) {
-        console.error(err);
-        setError("Erro ao carregar repositórios. Tente novamente.");
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchData();
+  const langs = useMemo(() => {
+    const counts: Record<string, number> = {};
+    for (const r of graphData.repos) {
+      if (r.language) counts[r.language] = (counts[r.language] ?? 0) + 1;
+    }
+    return Object.entries(counts)
+      .map(([language, quantity]) => ({ language, quantity }))
+      .sort((a, b) => b.quantity - a.quantity);
   }, []);
 
-  const handleLangToggle = (lang: string) => {
-    setSelectedLangs((prev) =>
-      prev.includes(lang) ? prev.filter((l) => l !== lang) : [...prev, lang]
-    );
-    setCurrentPage(1);
-  };
+  const filteredRepos = useMemo(() => {
+    const q = searchQuery.trim().toLowerCase();
+    let list = [...graphData.repos];
 
-  const handleSortChange = (val: string) => {
-    setSortBy(val);
-    setCurrentPage(1);
-  };
+    if (selectedFilterIds.length > 0) {
+      list = list.filter((r) =>
+        matchMode === "AND"
+          ? highlight.intersectionRepoIds.has(r.nodeId)
+          : highlight.intersectionRepoIds.has(r.nodeId) || highlight.partialRepoIds.has(r.nodeId)
+      );
+    } else if (focusedRepoId) {
+      list = list.filter((r) => r.nodeId === focusedRepoId);
+    }
 
-  const sortedRepos = [...repos].sort((a, b) => {
-    if (sortBy === "stars") return b.stargazers_count - a.stargazers_count;
-    if (sortBy === "name") return a.name.localeCompare(b.name);
-    return new Date(b.updated_at).getTime() - new Date(a.updated_at).getTime();
-  });
+    if (q) {
+      list = list.filter(
+        (r) =>
+          r.name.toLowerCase().includes(q) ||
+          (r.description ?? "").toLowerCase().includes(q) ||
+          r.techs.some((t) => t.toLowerCase().includes(q)) ||
+          r.concepts.some((c) => c.toLowerCase().includes(q))
+      );
+    }
 
-  const filteredRepos =
-    selectedLangs.length === langs.length || selectedLangs.length === 0
-      ? sortedRepos
-      : sortedRepos.filter((r) => r.language && selectedLangs.includes(r.language));
+    list.sort((a, b) => {
+      if (selectedFilterIds.length >= 2) {
+        const aBridge = highlight.intersectionRepoIds.has(a.nodeId) ? 1 : 0;
+        const bBridge = highlight.intersectionRepoIds.has(b.nodeId) ? 1 : 0;
+        if (aBridge !== bBridge) return bBridge - aBridge;
+      }
+      if (sortBy === "connections") {
+        return b.techs.length + b.concepts.length - (a.techs.length + a.concepts.length);
+      }
+      if (sortBy === "stars") return b.stargazers_count - a.stargazers_count;
+      if (sortBy === "name") return a.name.localeCompare(b.name);
+      return new Date(b.updated_at).getTime() - new Date(a.updated_at).getTime();
+    });
+
+    return list;
+  }, [searchQuery, selectedFilterIds, focusedRepoId, matchMode, sortBy, highlight]);
 
   const totalPages = Math.ceil(filteredRepos.length / REPOS_PER_PAGE);
   const paginatedRepos = filteredRepos.slice(
@@ -120,35 +125,68 @@ const Dashboard = (): ReactElement => {
     currentPage * REPOS_PER_PAGE
   );
 
-  const totalStars = repos.reduce((sum, r) => sum + r.stargazers_count, 0);
-  const topRepos = [...repos]
-    .sort((a, b) => b.stargazers_count - a.stargazers_count)
-    .slice(0, 4)
-    .map((r) => ({
-      name: r.name,
-      stargazers_count: r.stargazers_count,
-      html_url: r.html_url,
-      language: r.language ?? null,
-      updated_at: r.updated_at,
-    }));
+  const totalStars = useMemo(
+    () => graphData.repos.reduce((sum, r) => sum + r.stargazers_count, 0),
+    []
+  );
+
+  const topRepos = useMemo(
+    () =>
+      [...graphData.repos]
+        .sort((a, b) => b.stargazers_count - a.stargazers_count)
+        .slice(0, 4)
+        .map((r) => ({
+          name: r.name,
+          stargazers_count: r.stargazers_count,
+          html_url: r.html_url,
+          language: r.language,
+          updated_at: r.updated_at,
+        })),
+    []
+  );
 
   return (
-    <div className="min-h-screen">
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <ProjectTabs />
+    <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+      <ProjectTabs />
 
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
-          <ProfileSidebar totalStars={totalStars} topRepos={topRepos} />
+      {/* Unified 3D + 2D Knowledge Graph with Scroll-Shrink & Minimize */}
+      <UnifiedGraphStage
+        nodes={graphData.nodes}
+        edges={graphData.edges}
+        selectedFilterIds={selectedFilterIds}
+        focusedRepoId={focusedRepoId}
+        matchMode={matchMode}
+        stageMode={stageMode}
+        onStageModeChange={setStageMode}
+        onToggleFilterNode={handleToggleFilterNode}
+        onFocusRepoNode={(id) => {
+          setFocusedRepoId(id);
+          if (id) {
+            if (stageMode === "minimized") setStageMode("auto");
+            window.scrollTo({ top: 0, behavior: "smooth" });
+          }
+        }}
+        onClearFilters={handleClearFilters}
+      />
 
-          <section className="lg:col-span-8">
-            {/* Tab Navigation */}
-            <div className="flex gap-2 mb-6">
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+        <ProfileSidebar
+          user={graphData.user}
+          loading={false}
+          totalStars={totalStars}
+          topRepos={topRepos}
+        />
+
+        <section className="lg:col-span-8">
+          <div className="flex flex-wrap items-center justify-between gap-3 mb-5">
+            <div className="glass-panel inline-flex p-1 rounded-xl gap-1">
               <button
+                type="button"
                 aria-current={!isOverview ? "page" : undefined}
-                className={`px-5 py-2 rounded-xl text-sm font-semibold transition-all ${
+                className={`px-4 py-2 rounded-lg text-xs sm:text-sm font-semibold transition-all ${
                   !isOverview
-                    ? "bg-waka-pink text-white shadow-md"
-                    : "bg-card-light dark:bg-card-dark border border-border-light dark:border-border-dark text-gray-600 dark:text-gray-300 hover:border-waka-pink"
+                    ? "bg-primary text-slate-950 shadow-sm"
+                    : "text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white"
                 }`}
                 onClick={() => navigate("/")}
                 data-testid="tab-dashboard"
@@ -156,135 +194,102 @@ const Dashboard = (): ReactElement => {
                 Dashboard
               </button>
               <button
+                type="button"
                 aria-current={isOverview ? "page" : undefined}
-                className={`px-5 py-2 rounded-xl text-sm font-semibold transition-all ${
+                className={`px-4 py-2 rounded-lg text-xs sm:text-sm font-semibold transition-all ${
                   isOverview
-                    ? "bg-waka-pink text-white shadow-md"
-                    : "bg-card-light dark:bg-card-dark border border-border-light dark:border-border-dark text-gray-600 dark:text-gray-300 hover:border-waka-pink"
+                    ? "bg-primary text-slate-950 shadow-sm"
+                    : "text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white"
                 }`}
                 onClick={() => navigate("/overview")}
                 data-testid="tab-overview"
               >
-                Todos os Repos
+                Todos os Repos ({graphData.repos.length})
               </button>
             </div>
 
-            {error && (
-              <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-xl p-4 mb-6 text-red-700 dark:text-red-300 text-sm">
-                <span className="material-symbols-outlined text-base mr-2">error</span>
-                {error}
+            <span className="font-mono text-[11px] text-slate-500 dark:text-slate-400">
+              {graphData.stats.totalNodes} nós · {graphData.stats.totalEdges} conexões indexadas
+            </span>
+          </div>
+
+          <GraphSelectorBar
+            nodes={graphData.nodes}
+            selectedIds={selectedFilterIds}
+            matchMode={matchMode}
+            intersectionCount={highlight.intersectionRepoIds.size}
+            filteredCount={highlight.intersectionRepoIds.size + highlight.partialRepoIds.size}
+            sortBy={sortBy}
+            onToggleNode={handleToggleFilterNode}
+            onClear={handleClearFilters}
+            onMatchModeChange={setMatchMode}
+            onSortChange={(val) => {
+              setSortBy(val);
+              setCurrentPage(1);
+            }}
+          />
+
+          {!isOverview && selectedFilterIds.length === 0 && !focusedRepoId && (
+            <LanguageStats langs={langs} />
+          )}
+
+          {filteredRepos.length === 0 ? (
+            <div className="glass-panel rounded-2xl text-center py-12 px-4 text-slate-500 dark:text-slate-400 space-y-3">
+              <p className="text-sm">
+                Nenhum repositório conecta simultaneamente todos os itens selecionados no modo{" "}
+                <strong>Interseção</strong>.
+              </p>
+              {selectedFilterIds.length >= 2 && matchMode === "AND" && (
+                <button
+                  type="button"
+                  onClick={() => setMatchMode("OR")}
+                  className="px-4 py-2 rounded-xl bg-primary text-slate-950 text-xs font-bold"
+                >
+                  Alternar para modo União (ver repos com qualquer um deles)
+                </button>
+              )}
+            </div>
+          ) : (
+            <>
+              <p className="font-mono text-xs text-slate-500 dark:text-slate-400 mb-4">
+                Exibindo {isOverview ? paginatedRepos.length : Math.min(6, paginatedRepos.length)} de{" "}
+                {filteredRepos.length} repositório{filteredRepos.length !== 1 ? "s" : ""} conectado
+                {filteredRepos.length !== 1 ? "s" : ""}
+              </p>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                {(isOverview ? paginatedRepos : paginatedRepos.slice(0, 6)).map((repo) => (
+                  <RepoCard
+                    key={repo.id}
+                    repo={repo}
+                    isBridgeMatch={
+                      selectedFilterIds.length >= 2 &&
+                      highlight.intersectionRepoIds.has(repo.nodeId)
+                    }
+                    isFocused={focusedRepoId === repo.nodeId}
+                    onFocusInGraph={(id) => {
+                      const next = focusedRepoId === id ? null : id;
+                      setFocusedRepoId(next);
+                      if (next) {
+                        if (stageMode === "minimized") setStageMode("auto");
+                        window.scrollTo({ top: 0, behavior: "smooth" });
+                      }
+                    }}
+                    onToggleTag={handleToggleFilterNode}
+                  />
+                ))}
               </div>
-            )}
-
-            {!isOverview ? (
-              <>
-                {/* Dashboard view: Language Stats + Featured Repos */}
-                {loading ? (
-                  <div className="bg-card-light dark:bg-card-dark rounded-2xl shadow-lg border border-border-light dark:border-border-dark p-8 mb-8">
-                    <div className="animate-pulse space-y-4">
-                      <div className="h-6 w-48 bg-gray-200 dark:bg-gray-700 rounded" />
-                      <div className="h-3 w-full bg-gray-200 dark:bg-gray-700 rounded-full" />
-                      <div className="grid grid-cols-2 gap-4 mt-6">
-                        {[...Array(6)].map((_, i) => (
-                          <div key={i} className="h-4 bg-gray-200 dark:bg-gray-700 rounded" />
-                        ))}
-                      </div>
-                    </div>
-                  </div>
-                ) : (
-                  <LanguageStats langs={langs} />
-                )}
-
-                <FilterBar
-                  langs={langs.map((l) => l.language)}
-                  selectedLangs={selectedLangs}
-                  onLangToggle={handleLangToggle}
-                  sortBy={sortBy}
-                  onSortChange={handleSortChange}
+              {(isOverview || selectedFilterIds.length > 0) && (
+                <Pagination
+                  currentPage={currentPage}
+                  totalPages={totalPages}
+                  onPageChange={setCurrentPage}
                 />
-
-                {loading ? (
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    {[...Array(4)].map((_, i) => (
-                      <div
-                        key={i}
-                        className="animate-pulse bg-card-light dark:bg-card-dark rounded-xl border border-border-light dark:border-border-dark p-5 h-48"
-                      >
-                        <div className="flex gap-3 mb-4">
-                          <div className="w-10 h-10 bg-gray-200 dark:bg-gray-700 rounded-lg" />
-                          <div className="space-y-2 flex-1">
-                            <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-3/4" />
-                            <div className="h-3 bg-gray-200 dark:bg-gray-700 rounded w-1/2" />
-                          </div>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                ) : (
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    {paginatedRepos.slice(0, 4).map((repo) => (
-                      <RepoCard key={repo.id} repo={repo} />
-                    ))}
-                  </div>
-                )}
-              </>
-            ) : (
-              <>
-                {/* Overview: full repo list with pagination */}
-                <FilterBar
-                  langs={langs.map((l) => l.language)}
-                  selectedLangs={selectedLangs}
-                  onLangToggle={handleLangToggle}
-                  sortBy={sortBy}
-                  onSortChange={handleSortChange}
-                  showSort
-                />
-
-                {loading ? (
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    {[...Array(6)].map((_, i) => (
-                      <div
-                        key={i}
-                        className="animate-pulse bg-card-light dark:bg-card-dark rounded-xl border border-border-light dark:border-border-dark p-5 h-48"
-                      >
-                        <div className="flex gap-3 mb-4">
-                          <div className="w-10 h-10 bg-gray-200 dark:bg-gray-700 rounded-lg" />
-                          <div className="space-y-2 flex-1">
-                            <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-3/4" />
-                            <div className="h-3 bg-gray-200 dark:bg-gray-700 rounded w-1/2" />
-                          </div>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                ) : filteredRepos.length === 0 ? (
-                  <div className="text-center py-16 text-gray-500 dark:text-gray-400">
-                    <span className="material-symbols-outlined text-5xl mb-4 block">search_off</span>
-                    <p>Nenhum repositório encontrado com os filtros selecionados.</p>
-                  </div>
-                ) : (
-                  <>
-                    <p className="text-sm text-gray-500 mb-4">
-                      {filteredRepos.length} repositório{filteredRepos.length !== 1 ? "s" : ""} encontrado{filteredRepos.length !== 1 ? "s" : ""}
-                    </p>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                      {paginatedRepos.map((repo) => (
-                        <RepoCard key={repo.id} repo={repo} />
-                      ))}
-                    </div>
-                    <Pagination
-                      currentPage={currentPage}
-                      totalPages={totalPages}
-                      onPageChange={setCurrentPage}
-                    />
-                  </>
-                )}
-              </>
-            )}
-          </section>
-        </div>
-      </main>
-    </div>
+              )}
+            </>
+          )}
+        </section>
+      </div>
+    </main>
   );
 };
 
