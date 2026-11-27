@@ -73,7 +73,7 @@ const GraphSelectorBar = ({
               <button
                 type="button"
                 onClick={onClear}
-                className="text-xs font-mono text-slate-400 hover:text-white underline ml-1"
+                className="text-xs font-mono text-slate-600 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white underline ml-1"
                 data-testid="clear-graph-filters"
               >
                 Limpar

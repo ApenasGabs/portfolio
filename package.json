@@ -12,7 +12,7 @@
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview",
     "index:graph": "node scripts/build-graph-index.mjs src/data/graphIndex.json",
-    "test": "node --experimental-strip-types src/utils/__tests__/graphFilter.test.ts"
+    "test": "node --experimental-strip-types src/utils/__tests__/graphFilter.test.ts && node --experimental-strip-types src/utils/__tests__/url.test.ts"
   },
   "dependencies": {
     "@types/react-router-dom": "^5.3.3",

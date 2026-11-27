@@ -151,17 +151,17 @@ const UnifiedGraphStage = ({
                 {selectedNodes.slice(0, 3).map((n) => (
                   <span
                     key={n.id}
-                    className="font-mono text-[11px] px-2 py-0.5 rounded-md bg-sky-500/15 border border-sky-400/40 text-sky-300 whitespace-nowrap"
+                    className="font-mono text-[11px] px-2 py-0.5 rounded-md bg-sky-500/15 border border-sky-400/40 text-sky-700 dark:text-sky-300 whitespace-nowrap"
                   >
                     {n.label}
                   </span>
                 ))}
-                <span className="font-mono text-[11px] text-amber-300">
+                <span className="font-mono text-[11px] text-amber-700 dark:text-amber-300">
                   → {highlight.intersectionRepoIds.size} ponte(s)
                 </span>
               </div>
             ) : (
-              <span className="font-mono text-[11px] text-slate-400 hidden sm:inline">
+              <span className="font-mono text-[11px] text-slate-600 dark:text-slate-400 hidden sm:inline">
                 recolhido no scroll · {nodes.length} nós
               </span>
             )}
@@ -171,7 +171,7 @@ const UnifiedGraphStage = ({
               <button
                 type="button"
                 onClick={onClearFilters}
-                className="text-[11px] font-mono text-slate-400 hover:text-white px-2 py-1"
+                className="text-[11px] font-mono text-slate-600 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white px-2 py-1"
               >
                 Limpar
               </button>
@@ -179,7 +179,7 @@ const UnifiedGraphStage = ({
             <button
               type="button"
               onClick={handleRestoreFromCompact}
-              className="px-3 py-1.5 rounded-xl bg-primary/15 hover:bg-primary hover:text-slate-950 border border-primary/40 text-xs font-semibold text-primary transition-colors"
+              className="px-3 py-1.5 rounded-xl bg-primary/15 hover:bg-primary hover:text-slate-950 border border-primary/40 text-xs font-semibold text-sky-700 dark:text-primary transition-colors"
               data-testid="restore-graph-scroll-btn"
             >
               Ver Grafo ↑
@@ -213,7 +213,7 @@ const UnifiedGraphStage = ({
                     setDimension("3d");
                     if (stageMode === "minimized") onStageModeChange("auto");
                   }}
-                  className={`px-2.5 py-1 rounded-lg text-xs font-display font-bold transition-colors ${
+                  className={`px-2 sm:px-2.5 py-1 rounded-lg text-[11px] sm:text-xs font-display font-bold whitespace-nowrap transition-colors ${
                     dimension === "3d"
                       ? "bg-primary text-slate-950 shadow-sm"
                       : "text-slate-300 hover:text-white"
@@ -230,7 +230,7 @@ const UnifiedGraphStage = ({
                     setDimension("2d");
                     if (stageMode === "minimized") onStageModeChange("auto");
                   }}
-                  className={`px-2.5 py-1 rounded-lg text-xs font-display font-bold transition-colors ${
+                  className={`px-2 sm:px-2.5 py-1 rounded-lg text-[11px] sm:text-xs font-display font-bold whitespace-nowrap transition-colors ${
                     dimension === "2d"
                       ? "bg-emerald-400 text-slate-950 shadow-sm"
                       : "text-slate-300 hover:text-white"

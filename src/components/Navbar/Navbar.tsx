@@ -17,6 +17,36 @@ const Navbar = ({ searchQuery, onSearchChange }: NavbarProps): ReactElement => {
     setIsDark((prev) => !prev);
   };
 
+  const [isMobileSearchOpen, setIsMobileSearchOpen] = useState(() => searchQuery !== "");
+
+  const renderSearch = (testId: string, autoFocus = false): ReactElement => (
+    <div className="relative w-full">
+      <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
+        <span className="material-symbols-outlined text-slate-400 text-base">search</span>
+      </div>
+      <input
+        aria-label="Filtrar repositórios"
+        className="block w-full pl-10 pr-8 py-2 border border-border-light dark:border-border-dark rounded-xl leading-5 bg-white/70 dark:bg-slate-900/70 text-slate-900 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary/60 text-sm transition-colors"
+        placeholder="Filtrar repositórios por nome ou descrição..."
+        type="search"
+        value={searchQuery}
+        autoFocus={autoFocus}
+        onChange={(e) => onSearchChange(e.target.value)}
+        data-testid={testId}
+      />
+      {searchQuery && (
+        <button
+          type="button"
+          aria-label="Limpar busca"
+          onClick={() => onSearchChange("")}
+          className="absolute inset-y-0 right-0 pr-3 flex items-center text-slate-400 hover:text-slate-700 dark:hover:text-slate-200"
+        >
+          <span className="material-symbols-outlined text-base">close</span>
+        </button>
+      )}
+    </div>
+  );
+
   return (
     <nav className="sticky top-0 z-30 bg-white/75 dark:bg-[#070a0f]/75 backdrop-blur-xl border-b border-border-light dark:border-border-dark">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -29,33 +59,23 @@ const Navbar = ({ searchQuery, onSearchChange }: NavbarProps): ReactElement => {
           </Link>
 
           <div className="hidden md:flex flex-1 max-w-md mx-4">
-            <div className="relative w-full">
-              <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
-                <span className="material-symbols-outlined text-slate-400 text-base">search</span>
-              </div>
-              <input
-                aria-label="Filtrar repositórios"
-                className="block w-full pl-10 pr-8 py-2 border border-border-light dark:border-border-dark rounded-xl leading-5 bg-white/70 dark:bg-slate-900/70 text-slate-900 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary/60 text-sm transition-colors"
-                placeholder="Filtrar repositórios por nome ou descrição..."
-                type="search"
-                value={searchQuery}
-                onChange={(e) => onSearchChange(e.target.value)}
-                data-testid="navbar-search"
-              />
-              {searchQuery && (
-                <button
-                  type="button"
-                  aria-label="Limpar busca"
-                  onClick={() => onSearchChange("")}
-                  className="absolute inset-y-0 right-0 pr-3 flex items-center text-slate-400 hover:text-slate-200"
-                >
-                  <span className="material-symbols-outlined text-base">close</span>
-                </button>
-              )}
-            </div>
+            {renderSearch("navbar-search")}
           </div>
 
           <div className="flex items-center gap-3 shrink-0">
+            <button
+              type="button"
+              aria-label={isMobileSearchOpen ? "Fechar busca" : "Abrir busca"}
+              aria-expanded={isMobileSearchOpen}
+              aria-controls="navbar-mobile-search"
+              className="md:hidden w-10 h-10 rounded-xl border border-border-light dark:border-border-dark bg-white/50 dark:bg-white/[0.03] text-slate-600 dark:text-slate-300 hover:border-primary/50 hover:text-primary flex items-center justify-center transition-colors"
+              onClick={() => setIsMobileSearchOpen((prev) => !prev)}
+              data-testid="navbar-mobile-search-toggle"
+            >
+              <span className="material-symbols-outlined text-[20px]">
+                {isMobileSearchOpen ? "close" : "search"}
+              </span>
+            </button>
             <button
               type="button"
               aria-label={isDark ? "Ativar modo claro" : "Ativar modo escuro"}
@@ -77,6 +97,11 @@ const Navbar = ({ searchQuery, onSearchChange }: NavbarProps): ReactElement => {
             />
           </div>
         </div>
+        {isMobileSearchOpen && (
+          <div id="navbar-mobile-search" className="md:hidden pb-3">
+            {renderSearch("navbar-search-mobile", true)}
+          </div>
+        )}
       </div>
     </nav>
   );

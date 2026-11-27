@@ -334,6 +334,16 @@ const Canvas2D = ({
       canvas.style.cursor = "grab";
     };
 
+    const onPointerCancel = (ev: PointerEvent) => {
+      if (draggedNode) {
+        draggedNode.pinned = false;
+        draggedNode = null;
+      }
+      isPanning = false;
+      if (canvas.hasPointerCapture(ev.pointerId)) canvas.releasePointerCapture(ev.pointerId);
+      canvas.style.cursor = "grab";
+    };
+
     const onWheel = (ev: WheelEvent) => {
       ev.preventDefault();
       targetViewRef.current = null;
@@ -351,6 +361,7 @@ const Canvas2D = ({
     canvas.addEventListener("pointerdown", onPointerDown);
     canvas.addEventListener("pointermove", onPointerMove);
     canvas.addEventListener("pointerup", onPointerUp);
+    canvas.addEventListener("pointercancel", onPointerCancel);
     canvas.addEventListener("wheel", onWheel, { passive: false });
 
     let frameId = 0;
@@ -553,6 +564,7 @@ const Canvas2D = ({
       canvas.removeEventListener("pointerdown", onPointerDown);
       canvas.removeEventListener("pointermove", onPointerMove);
       canvas.removeEventListener("pointerup", onPointerUp);
+      canvas.removeEventListener("pointercancel", onPointerCancel);
       canvas.removeEventListener("wheel", onWheel);
     };
   }, [nodes, edges]);

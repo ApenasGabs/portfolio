@@ -1,6 +1,7 @@
 import type { ReactElement } from "react";
 
 import type { EnrichedRepo } from "../../types/graph";
+import { normalizeExternalUrl } from "../../utils/url";
 
 interface RepoCardProps {
   repo: EnrichedRepo;
@@ -19,6 +20,7 @@ const RepoCard = ({
 }: RepoCardProps): ReactElement => {
   const langAbbr = (repo.language ?? "??").slice(0, 2).toUpperCase();
   const updatedDate = new Date(repo.updated_at).toLocaleDateString("pt-BR");
+  const demoUrl = normalizeExternalUrl(repo.homepage);
 
   return (
     <article
@@ -110,10 +112,10 @@ const RepoCard = ({
           )}
         </div>
         <div className="flex items-center gap-2">
-          {repo.homepage && (
+          {demoUrl !== null && (
             <a
               className="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg text-xs font-semibold border border-emerald-500/30 bg-emerald-500/10 text-emerald-700 dark:text-emerald-300 hover:bg-emerald-500 hover:text-slate-950 transition-colors"
-              href={repo.homepage}
+              href={demoUrl}
               target="_blank"
               rel="noopener noreferrer"
             >

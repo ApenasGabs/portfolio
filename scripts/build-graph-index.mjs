@@ -5,6 +5,20 @@ import fs from "node:fs";
 const OWNER = process.env.GITHUB_OWNER || "ApenasGabs";
 const OUT_FILE = process.argv[2] || new URL("../src/data/graphIndex.json", import.meta.url).pathname;
 
+/** Adds https:// to protocol-less homepages and drops non-http(s) values. */
+const normalizeExternalUrl = (raw) => {
+  const value = (raw || "").trim();
+  if (!value) return null;
+  const candidate = /^https?:\/\//i.test(value) ? value : `https://${value.replace(/^\/+/, "")}`;
+  try {
+    const url = new URL(candidate);
+    if ((url.protocol !== "http:" && url.protocol !== "https:") || !url.hostname.includes(".")) return null;
+    return candidate;
+  } catch {
+    return null;
+  }
+};
+
 const QUERY = `
 query($login: String!, $cursor: String) {
   user(login: $login) {
@@ -253,7 +267,7 @@ for (const r of rawRepos) {
     label: r.name,
     description: "",
     url: r.url,
-    homepage: r.homepageUrl || "",
+    homepage: normalizeExternalUrl(r.homepageUrl) || "",
     stars: r.stargazerCount,
     forks: r.forkCount,
     updatedAt: r.updatedAt,
@@ -340,7 +354,7 @@ for (const r of rawRepos) {
     name: r.name,
     description: summary || null,
     html_url: r.url,
-    homepage: r.homepageUrl || null,
+    homepage: normalizeExternalUrl(r.homepageUrl),
     language: r.primaryLanguage?.name || langs[0]?.name || null,
     languages: langs.map((l) => l.name),
     techs: Array.from(repoTechs),
